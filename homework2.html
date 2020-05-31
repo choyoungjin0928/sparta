@@ -49,14 +49,42 @@
             text-align: center;
         }
 
-        .wrap{
+        .wrap {
             margin: auto;
             width: 500px;
         }
+
+        #dollar {
+            color: blue;
+        }
     </style>
     <script>
-        function order(){
-            alert("주문이 완료되었습니다.");
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    let money = response[1]['rate'];
+                    $('#dollar').append(money);
+                }
+            })
+        });
+        function order() {
+            let Name = $('#name').val();
+            let Address = $('#address').val();
+            let Number = $('#number').val();
+            if (Name == '' || Address == '' || Number == '') {
+                if (Name == '') {
+                    alert("이름을 입력해주세요.");
+                } else if (Address == '') {
+                    alert("주소를 입력해주세요.");
+                } else if (Number == '') {
+                    alert("전화번호를 입력해주세요.");
+                }
+            } else {
+                alert("주문이 완료되었습니다.")
+            }
         }
     </script>
 </head>
@@ -65,15 +93,16 @@
     <div class="wrap">
         <div class="myitem"></div>
         <div class="description-box">
-            <h1>해바라기를 팝니다. <span class="price">가격 : 10,000,000원</span></h1>
-            <p>이 해바라기는 신비한 힘을 갖고 있습니다.</p>
+            <h1>스포츠카를 팝니다. <span class="price">가격 : $150,000</span></h1>
+            <p>카레라 S는 수평대향 6기동 3.0리터 엔진은 장착한 독일 포르쉐사의 스포츠카이다. 정지상태에서 100km/h까지 도달하는 시간은 3.7초이며 최고시속은 308km/h이다.</p>
+            <p id="dollar">달러 원 환율 : </p>
         </div>
         <div class="order-box">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">주문자성함</span>
                 </div>
-                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+                <input type="text" class="form-control" id="name" aria-describedby="basic-addon3">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -90,13 +119,13 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">주소</span>
                 </div>
-                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+                <input type="text" class="form-control" id="address" aria-describedby="basic-addon3">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">전화번호</span>
                 </div>
-                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+                <input type="text" class="form-control" id="number" aria-describedby="basic-addon3">
             </div>
         </div>
         <div class="button">

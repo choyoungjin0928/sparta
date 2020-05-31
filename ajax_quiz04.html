@@ -15,14 +15,20 @@
 
     <script>
         function q1() {
-            let num = $('#magicnum').val();
-            let url_to = "http://numbersapi.com/" + num
+            let target_num = $('#magicnum').val();
+
+            if (target_num == '') {
+                alert('숫자를 입력하세요');
+                return;
+            }
+
+            let target_url = 'http://numbersapi.com/' + target_num;
             $.ajax({
                 type: "GET",
-                url: url_to,
+                url: target_url,
                 data: {},
                 success: function (response) {
-                    console.log(response)
+                    $("#meaning").text(response);
                 }
             })
         }
