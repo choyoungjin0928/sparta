@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Webpage Title -->
+    <title>포르쉐 구매</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
+
+    <script type="text/javascript">
+        function is_long(obj) {
+            let content = $(obj).val();
+            console.log(content);
+            console.log(content.length);
+            if (content.length > 140) {
+                alert('리뷰는 140자까지 기록할 수 있습니다.');
+                $(obj).val(content.substring(0, 140));
+            }
+        }
+
+        function make_review() {
+            let name = $('#name').val();
+            let count = $('#count').val();
+            let address = $('#address').val();
+            let number = $('#number').val();
+
+            if (name == '') {
+                alert('주문자 이름을 입력해주세요');
+                $('#title').focus();
+                return;
+            } else if (count == '-- 수량을 선택하세요 --') {
+                alert('수량을 선택해주세요');
+                $('#count').focus();
+                return;
+            } else if (address == '') {
+                alert('주소를 입력해주세요');
+                $('#address').focus();
+                return;
+            } else if (number == '') {
+                alert('전화번호를 입력해주세요');
+                $('#number').focus();
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/reviews",
+                data: { name_give: name, count_give: count, address_give: address, number_give:number },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg']);
+                        window.location.reload();
+                    }
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            $('#orders-box').html('');
+            listing();
+        });
+
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "/reviews",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let reviews = response['reviews'];
+                        for (let i = 0; i < reviews.length; i++) {
+                            make_card(reviews[i]['name'], reviews[i]['count'], reviews[i]['address'], reviews[i]['number']);
+                        }
+                    } else {
+                        alert('리뷰를 받아오지 못했습니다');
+                    }
+                }
+            })
+        }
+
+        function make_card(name, count, address, number) {
+            let temp_html = `<tr>
+                                <td>${name}</td>
+                                <td>${count}</td>
+                                <td>${address}</td>
+                                <td>${number}</td>
+                            </tr>`;
+            $('#orders-box').append(temp_html);
+        }
+
+    </script>
+
+    <style type="text/css">
+        * {
+            font-family: 'Do Hyeon', sans-serif;
+        }
+
+        .wrap {
+            width: 500px;
+            margin: auto;
+        }
+
+        .img {
+            background-image: url('https://www.motorgraph.com/news/photo/201811/21202_69587_012.jpg');
+            background-size: cover;
+            background-position: center;
+            width: 500px;
+            height: 300px;
+        }
+
+        .info {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            margin: 20px 5px auto 5px;
+        }
+
+        h1,
+        h5 {
+            display: inline;
+        }
+
+        .order {
+            text-align: center;
+        }
+
+        .orders {
+            margin-top: 100px;
+        }
+
+        .meta_info {
+            width: 20%;
+        }
+
+        .price {
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="img"></div>
+        <div class="info">
+            <h1>스포츠카를 팝니다. <span class="price">가격 : $150,000</span></h1>
+            <p>카레라 S는 수평대향 6기동 3.0리터 엔진은 장착한 독일 포르쉐사의 스포츠카이다. 정지상태에서 100km/h까지 도달하는 시간은 3.7초이며 최고시속은 308km/h이다.</p>
+        </div>
+        <div class="info">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">주문자 이름</span>
+                </div>
+                <input type="text" class="form-control" id="name" aria-describedby="basic-addon3">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">수량</label>
+                </div>
+                <select class="custom-select" id="count">
+                    <option selected>-- 수량을 선택하세요 --</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">주소</span>
+                </div>
+                <input type="text" class="form-control" id="address" aria-describedby="basic-addon3">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">전화번호</span>
+                </div>
+                <input type="text" class="form-control" id="number" aria-describedby="basic-addon3">
+            </div>
+            <div class="order">
+                <button onclick="make_review()" type="button" class="btn btn-primary">주문하기</button>
+            </div>
+        </div>
+        <div class="orders">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="meta_info" scope="col">주문자 이름</th>
+                        <th class="meta_info" scope="col">수량</th>
+                        <th scope="col">주소</th>
+                        <th scope="col">전화번호</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-box">
+                    <tr>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td>@mdo</td>
+                        <td>@mdo</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
