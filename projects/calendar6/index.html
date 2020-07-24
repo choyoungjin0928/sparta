@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Calendar</title>
+    <link href="https://unpkg.com/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" rel="stylesheet">
+    <link href="fullcalendar/4.4.0/core/main.min.css" rel="stylesheet">
+    <link href="fullcalendar/4.4.0/daygrid/main.min.css" rel="stylesheet">
+    <link href="fullcalendar/4.4.0/bootstrap/main.min.css" rel="stylesheet">
+    <link href="fullcalendar/4.4.0/timegrid/main.min.css" rel="stylesheet">
+    <link href="fullcalendar/4.4.0/list/main.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container my-3">
+        <div id="calendar"></div>
+    </div>
+
+    <script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
+    <script src="fullcalendar/4.4.0/core/main.min.js"></script>
+    <script src="fullcalendar/4.4.0/daygrid/main.min.js"></script>
+    <script src="fullcalendar/4.4.0/bootstrap/main.min.js"></script>
+    <script src="fullcalendar/4.4.0/timegrid/main.min.js"></script>
+    <script src="fullcalendar/4.4.0/list/main.min.js"></script>
+    <script src="fullcalendar/4.4.0/core/locales/id.js"></script>
+    <script src="fullcalendar/4.4.0/interaction/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script>
+        var el = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(el, {
+            plugins: ['interaction', 'dayGrid', 'timeGrid', 'list', 'bootstrap'],
+            themeSystem: 'bootstrap',
+            weekNumbers: true,
+            eventLimit: true,
+            events: 'http://siswakode.test/events.json',
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+            },
+            footer: {
+                left: 'prev next today',
+                right: 'dayGridMonth timeGridWeek timeGridDay listYear'
+            },
+            timeZone: 'Asia/Jakarta',
+            locales: ['idLocale'],
+            locale: 'id',
+            editable: true,
+            selectable: true,
+            eventClick: function(info){
+                info.jsEvent,preventDefault();
+
+                if(info.event.url){
+                    window.open(info.event.url);
+                } else {
+                    Swal.fire(info.event.title, 'Start: '+info.event.start, 'question');
+                }
+            }
+        })
+        calendar.render();
+    </script>
+</body>
+</html>
