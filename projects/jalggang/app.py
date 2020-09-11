@@ -1,8 +1,8 @@
-import json
-from flask import Flask, render_template, jsonify, request, session, redirect, url_for, make_response
 #-*- coding:utf-8 -*-
+import json, os, sys
+from flask import Flask, render_template, jsonify, request, session, redirect, url_for, make_response
 from pymongo import MongoClient
-client = MongoClient('mongodb://agapao:5561@3.34.98.182/', 27017)
+client = MongoClient('mongodb://agapao1:1998@15.164.163.148/', 27017)
 db = client.aunae
 
 from flask_restful import Resource, Api, reqparse, abort
@@ -150,6 +150,10 @@ def popup1():
 @app.route('/popupadd')
 def popupadd():
    return render_template('popupadd.html')
+
+@app.route('/pop')
+def pop():
+   return render_template('index.html')
   
 
 
@@ -288,7 +292,7 @@ def addcustomer():
     id_receive = request.form['id_give']
     password_receive = request.form['password_give']
     image_receive = request.form['image_give']
-    print(name_receive)
+    
     doc = {
         'name':name_receive,
         'age':age_receive,
@@ -301,6 +305,7 @@ def addcustomer():
     db.solution.insert_one(doc)
 
     return jsonify({'result':'success', 'msg': '저장이 완료되었습니다'})
+
 
 
 if __name__ == '__main__':

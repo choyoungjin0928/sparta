@@ -9,7 +9,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="{{ url_for('static', filename='index.css') }}" rel='stylesheet' />
 
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" />
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -19,43 +21,24 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+
     <!-- 쿠키 사용을 위한 Jquery-cookie 임포트 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
-
     <script>
         // 로딩 후 바로 실행
+        $(document).ready(function () {
+            if ($.cookie('mytoken') == undefined) {
+                // mytoken이라는 값으로 쿠키가 없으면, 로그인 창으로 이동시킵니다.
+                alert('먼저 로그인을 해주세요')
+                window.location.href = '/login'
+            } else {
+                // 쿠기가 있으면, 유저 정보를 불러옵니다.
 
-        if ($.cookie('mytoken') == undefined) {
-            // mytoken이라는 값으로 쿠키가 없으면, 로그인 창으로 이동시킵니다.
-            alert('먼저 로그인을 해주세요')
-            window.location.href = '/login'
-        } else {
-            // 쿠기가 있으면, 유저 정보를 불러옵니다.
-            load_user_info()
-        }
+                listing()
+            }
+        });
 
 
-        // 쿠키에 가지고 있는 token을 헤더에 담아서 보냅니다.
-        function load_user_info() {
-            $.ajax({
-                type: "GET",
-                url: "/api/nick",
-                headers: {
-                    'token_give': $.cookie('mytoken')
-                },
-                data: {},
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        // 올바른 결과값을 받으면 nickname을 입력해줍니다.
-                        $('#nickname').text(response['nickname'])
-                    } else {
-                        // 에러가 나면 메시지를 띄우고 로그인 창으로 이동합니다.
-                        alert(response['msg'])
-                        window.location.href = '/login'
-                    }
-                }
-            })
-        }
 
         // 로그아웃은 내가 가지고 있는 토큰만 쿠키에서 없애면 됩니다.
         function logout() {
@@ -66,70 +49,16 @@
 
 
 
-        $(document).ready(function () {
-
-
-
-            listing()
-
-        });
-
-
-
-        function listing() {
-            $.ajax({
-                type: "GET",
-                url: '/show',
-                data: {},
-                success: function (response) {
-                    if (response['result'] == 'success') {
-                        let orders = response['all_orders']
-
-                        for (let i = 0; i < orders.length; i++) {
-
-                            let name = orders[i]['name']
-                            let age = orders[i]['age']
-                            let phone = orders[i]['phone']
-                            let image = orders[i]['image']
-                            make_card(i, image, name, age, phone)
-                        }
-                    }
-                }
-            })
-        }
-
-        function make_card(i, image, name, age, phone) {
-            let temp_html = `<div class="card">
-                                <img class="card-img-top" src="${image}"
-                                    alt="Card image cap">
-                                <div class="card-body">
-                                    <h2>${name}</h2>
-                                    <p>${age}</p>
-                                    <p>${phone}</p>
-                                    <a class="btn btn-secondary" id="cardbtn" onclick="popup1('${name}')" role="button">솔루션</a>
-                                </div>
-
-                            </div>`;
-            $('#cards-box').append(temp_html);
-        }
-
-        function popup1(name) {
-            let want_name = name;
-            var win = window.open('/popup1?name=' + want_name, 'win', 'width=1000, height=600');
-        }
     </script>
-
-
     <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
     <style>
         /* GLOBAL STYLES
--------------------------------------------------- */
+    -------------------------------------------------- */
         /* Padding below the footer and lighter body text */
 
         body {
             padding-top: 3rem;
             padding-bottom: 3rem;
-            color: black;
         }
 
         .row {
@@ -155,7 +84,7 @@
         /*LIST*/
 
         .orders {
-            margin-top: 100px;
+            margin-top: 20px;
         }
 
         /*MYPAGE*/
@@ -174,18 +103,6 @@
             background-repeat: no-repeat;
             margin-top: 10px;
             width: 1920px;
-            height: 400px;
-            text-align: center;
-            color: white;
-            padding-top: 180px;
-        }
-
-        #ListPanel {
-            background-image: url("static/css/images/List.jpg");
-            background-position: center;
-            background-size: 1920px 600px;
-            background-repeat: no-repeat;
-            margin-top: 10px;
             height: 400px;
             text-align: center;
             color: white;
@@ -246,8 +163,7 @@
 
         .wrap {
             width: 1000px;
-            margin: 50px auto;
-            text-align: center;
+            margin: 120px auto;
         }
 
         /*IMAGES*/
@@ -284,7 +200,7 @@
 
         /*chart*/
         /* CUSTOMIZE THE CAROUSEL
-  -------------------------------------------------- */
+      -------------------------------------------------- */
         /* Carousel base class */
 
         .carousel {
@@ -313,7 +229,7 @@
         }
 
         /* MARKETING CONTENT
-  -------------------------------------------------- */
+      -------------------------------------------------- */
         /* Center align the text within the three columns below the carousel */
 
         .marketing .col-lg-4 {
@@ -331,7 +247,7 @@
         }
 
         /* Featurettes
-  ------------------------- */
+      ------------------------- */
 
         .featurette-divider {
             margin: 5rem 0;
@@ -347,7 +263,7 @@
         }
 
         /* RESPONSIVE CSS
-  -------------------------------------------------- */
+      -------------------------------------------------- */
 
         @media (min-width: 40em) {
 
@@ -369,18 +285,33 @@
             }
         }
 
-        #cardbtn {
-            color: white;
+        .calendar {
+            margin: 50px auto;
+            width: 700px;
+            height: 500px;
+            font-weight: bold;
+            text-align: center;
+            color: black;
         }
 
-        #firebasebtn{
-            margin: 50px auto;
-            width: 100px;
+        #yearselect {
+            font-size: 50px;
+            padding: 30px;
+        }
+
+        #container {
+            margin-top: 300px;
+            color: black;
+        }
+
+        #cardbtn {
+            color: white;
+            margin-left: 3px;
         }
     </style>
 </head>
 
-<body>
+<body onload="onload_fn();">
     <header>
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
             <a class="navbar-brand" href="/jalggang1">이제 그만 잘깡?</a>
@@ -413,27 +344,58 @@
             </div>
         </nav>
     </header>
-    <div id="solutionPanel" class="Panel">
+    <div id="reservationPanel">
         <h5>For Good Sleep & Life Style</h5>
-        <h1>솔루션</h1>
+        <h1>상담예약</h1>
     </div>
-    <div id="firebasebtn">
-        <a class="btn btn-secondary" href="https://console.firebase.google.com/project/jebal-e5856/firestore/data~2Fclients~2F%EC%95%84%EB%A6%B0" target="_blank" role="button">파이어베이스</a>
-    </div>
-    <div class="container marketing">
-        <div class="wrap">
-            <div class="card-columns" id="cards-box">
 
+    <div class="main">
+        <div class="content-wrap">
+            <div class="content-left">
+                <div class="main-wrap">
+                    <div id="main-day" class="main-day"></div>
+                    <div id="main-date" class="main-date"></div>
+                </div>
+                <div class="todo-wrap">
+                    <div class="todo-title">Todo List</div>
+                    <div class="input-wrap">
+                        <input type="text" placeholder="please write here!!" id="input-box" class="input-box" />
+                        <button type="button" id="input-data" class="input-data">
+                            INPUT
+                        </button>
+                        <div id="input-list" class="input-list"></div>
+                    </div>
+                </div>
             </div>
-
-            <hr class="featurette-divider">
-
+            <div class="content-right">
+                <table id="calendar" align="center">
+                    <thead>
+                        <tr class="btn-wrap clearfix">
+                            <td>
+                                <label id="prev"> &#60; </label>
+                            </td>
+                            <td align="center" id="current-year-month" colspan="5"></td>
+                            <td>
+                                <label id="next"> &#62; </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="sun" align="center">Sun</td>
+                            <td align="center">Mon</td>
+                            <td align="center">Tue</td>
+                            <td align="center">Wed</td>
+                            <td align="center">Thu</td>
+                            <td align="center">Fri</td>
+                            <td class="sat" align="center">Sat</td>
+                        </tr>
+                    </thead>
+                    <tbody id="calendar-body" class="calendar-body"></tbody>
+                </table>
+            </div>
         </div>
+    </div>
 
-        <footer class="container">
-            <p class="float-right"><a href="#">Back to top</a></p>
-            <p>© 2017-2020 Company, Inc. · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
-        </footer>
 </body>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
 
 </html>
